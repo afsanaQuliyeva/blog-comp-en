@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -19,7 +20,7 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = Category::all();
-        //Select * from Category
+        //Select * from categories
         return view('admin.category.categories', compact('categories'));
     }
 
@@ -39,18 +40,20 @@ class CategoryController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
-        $validated = $request-> validate([
-            'category_name' => 'required|unique:categories|max:255|min:2',
-            'slug' => 'required'
-        ]
+        //Class adi Request -> CategoryRequest
+//        $validated = $request-> validate([
+//            'category_name' => 'required|unique:categories|max:255|min:2',
+//            'slug' => 'required'
+//        ]
 //        [
 //            'category_name.required' => 'Kateqoriya boş ola bilməz.',
 //            'category_name.unique' => 'Kateqoriya adi tekrarlana bilmez.',
 //        ]
-        );
+       // )
 
+        $validated = $request->validated();
         $validated = Arr::add($validated, 'created_at', Carbon::now());
         Category::insert($validated);
         return Redirect::route('categories.index');
@@ -76,7 +79,7 @@ class CategoryController extends Controller
     public function edit($id)
     {
         //1
-        $category = Category::find($id);
+        $category = Category::findOrFail($id);
         //Select * from categories where id = $id
         return view('admin.category.edit', compact('category'));
     }
@@ -88,9 +91,15 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function update(Request $request, $id)
+    public function update(CategoryRequest $request, $id)
     {
-        //
+        $validated = $request->validated();
+        //dd($validated);
+        $validated = Arr::add($validated, 'updated_at', Carbon::now());
+        $success = Category::find($id)->update($validated);
+        if($success) {
+            return Redirect::route('categories.index');
+        }
     }
 
     /**
@@ -101,6 +110,32 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $success = Category::onlyTrashed()->findOrFail($id)->forceDelete();
+        if($success) {
+            return Redirect::route('categories.trash');
+        }
+
     }
+
+    public function delete($id) {
+        $success = Category::findOrFail($id)->delete();
+        if($success) {
+            return Redirect::route('categories.index');
+        }
+    }
+
+    public function showTrash() {
+        $deletedCategories = Category::onlyTrashed()->get();
+        return view('admin.category.trash', compact('deletedCategories'));
+    }
+
+    public function restore($id) {
+        $success = Category::onlyTrashed()->findOrFail($id)->restore();
+        if($success) {
+            return Redirect::route('categories.index');
+        }
+    }
+
+    //
+
 }

@@ -4,6 +4,7 @@
         <section class="content">
             <div class="mt-3 mb-3">
                 <a class="btn btn-info" href="{{route('categories.create')}}">Add category</a>
+                <a href="{{route('categories.trash')}}" class="btn btn-dark">Trash</a>
             </div>
             <div class="card">
                 <div class="card-header">
@@ -35,6 +36,7 @@
                             </td>
                             <td>
                                 <a href="{{route('categories.edit', $category->id)}}" class="btn btn-info">Edit</a>
+                                <a href="{{route('categories.delete', $category->id)}}" class="btn btn-danger">Delete</a>
                             </td>
 
                         </tr>

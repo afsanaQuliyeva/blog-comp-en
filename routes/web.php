@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\homeController;
 use App\Http\Controllers\MainController;
@@ -18,11 +19,17 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [homeController::class, 'index'] )->name('main');
-Route::get('/kateqoriyalar/mobil-cihazlar', function (){
-    return view('kateqoriya');
-})->name('kateqoriya.mobil');
-
 
 //JetStream
-Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
-Route::resource('categories', CategoryController::class);
+
+Route::group(['middleware' => ['auth:sanctum', 'verified']], function() {
+    Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+    Route::resource('categories', CategoryController::class);
+    Route::get('categories/delete/trash', [CategoryController::class, 'showTrash'])->name('categories.trash');
+    Route::get('categories/delete/{id}', [CategoryController::class, 'delete'])->name('categories.delete');
+    Route::get('/catgeories/restore/{id}', [CategoryController::class, 'restore'])->name('categories.restore');
+    Route::resource('articles', ArticleController::class);
+});
+
+
+

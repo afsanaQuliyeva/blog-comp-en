@@ -33,7 +33,6 @@
         <ul class="links">
             <li class="active"><a href="{{ route('main') }}">Home Page</a></li>
             <li><a href="generic.html">Generic Page</a></li>
-            <li><a href="{{route('kateqoriya.mobil')}}">Mobil</a></li>
 {{--            <li><a href=" {{\Illuminate\Support\Facades\URL::to('/kateqoriyalar/mobil-cihazlar')}}">Kateqoriya</a></li>--}}
         </ul>
         <ul class="icons">
