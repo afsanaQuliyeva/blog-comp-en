@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Article;
 use Illuminate\Http\Request;
 
 class homeController extends Controller
 {
     public function index() {
-        return view('homepage');
+        $articles = Article::latest()->paginate(Article::PAGE_COUNT);
+        return view('homepage', compact('articles'));
     }
 }
